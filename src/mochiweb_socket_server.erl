@@ -221,7 +221,7 @@ handle_call({get, Property}, _From, State) ->
     Res = do_get(Property, State),
     {reply, Res, State};
 handle_call(stop, _From, State) ->
-    {stop, normal, ok, State};
+    {stop, shutdown, ok, State};
 handle_call(_Message, _From, State) ->
     Res = error,
     {reply, Res, State}.
