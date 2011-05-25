@@ -48,9 +48,9 @@ set(Name, Property, _Value) ->
                           [Name, Property]).
 
 stop(Name) when is_atom(Name) ->
-    gen_server:cast(Name, stop);
+    gen_server:call(Name, stop);
 stop(Pid) when is_pid(Pid) ->
-    gen_server:cast(Pid, stop);
+    gen_server:call(Pid, stop);
 stop({local, Name}) ->
     stop(Name);
 stop({global, Name}) ->
@@ -220,6 +220,8 @@ handle_call(Req, From, State) when ?is_old_state(State) ->
 handle_call({get, Property}, _From, State) ->
     Res = do_get(Property, State),
     {reply, Res, State};
+handle_call(stop, _From, State) ->
+    {stop, normal, ok, State};
 handle_call(_Message, _From, State) ->
     Res = error,
     {reply, Res, State}.
@@ -244,9 +246,7 @@ handle_cast({set, profile_fun, ProfileFun}, State) ->
                  _ ->
                      State
              end,
-    {noreply, State1};
-handle_cast(stop, State) ->
-    {stop, normal, State}.
+    {noreply, State1}.
 
 
 terminate(Reason, State) when ?is_old_state(State) ->
